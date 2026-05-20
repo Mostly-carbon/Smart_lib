@@ -5,8 +5,11 @@ public class Book {
     private String isbn;
     
     public Book(String title, String author, String isbn) {
-        this.title = title;
-        this.author = author;
+        if (isbn == null || isbn.isEmpty()) {
+            throw new IllegalArgumentException("ISBN cannot be empty");
+        }
+        this.title = title == null ? "" : title;
+        this.author = author == null ? "" : author;
         this.isbn = isbn;
     }
     public String getTitle() {
