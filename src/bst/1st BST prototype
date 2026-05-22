@@ -1,0 +1,132 @@
+package com.mycompany.practicemain.DATA;
+public class BookBST {
+
+    // Node of BST
+    private static class Node {
+        Book book;
+        Node left;
+        Node right;
+
+        Node(Book book) {
+            this.book = book;
+        }
+    }
+
+    private Node root;
+    private int size;
+
+    public int size() {
+        return size;
+    }
+
+    /** Insert or update a book in the BST. Average O(log n). */
+    public void insert(Book book) {
+        root = insert(root, book);
+    }
+
+    // Recursive insert is OK (Task 2 is BST implementation)
+    private Node insert(Node current, Book book) {
+        if (current == null) {
+            size++;
+            return new Node(book);
+        }
+
+        int cmp = book.getIsbn().compareTo(current.book.getIsbn());
+
+        if (cmp < 0) {
+            current.left = insert(current.left, book);
+        } else if (cmp > 0) {
+            current.right = insert(current.right, book);
+        } else {
+            // ISBN already exists -> update record
+            current.book = book;
+        }
+        return current;
+    }
+
+    /**
+     * OPTIONAL helper (Iterative search)
+     * Task 3 is "recursive search", so you can replace/add that.
+     * This method is just to make BST usable for integration/testing.
+     */
+    public Book findIterative(String isbn) {
+        Node current = root;
+        while (current != null) {
+            int cmp = isbn.compareTo(current.book.getIsbn());
+            if (cmp == 0) return current.book;
+            if (cmp < 0) current = current.left;
+            else current = current.right;
+        }
+        return null;
+    }
+
+    /**
+     * Delete a book by ISBN and return the removed Book.
+     * This is helpful for Task 4 (borrow: remove from BST then push to stack).
+     */
+    public Book delete(String isbn) {
+        RemovedHolder holder = new RemovedHolder();
+        root = delete(root, isbn, holder);
+        if (holder.removed != null) size--;
+        return holder.removed;
+    }
+
+    // Used to pass removed book out of recursion cleanly
+    private static class RemovedHolder {
+        Book removed;
+    }
+
+    private Node delete(Node current, String isbn, RemovedHolder holder) {
+        if (current == null) return null;
+
+        int cmp = isbn.compareTo(current.book.getIsbn());
+
+        if (cmp < 0) {
+            current.left = delete(current.left, isbn, holder);
+        } else if (cmp > 0) {
+            current.right = delete(current.right, isbn, holder);
+        } else {
+            // Found node to delete
+            holder.removed = current.book;
+
+            // Case 1: No children
+            if (current.left == null && current.right == null) {
+                return null;
+            }
+
+            // Case 2: One child
+            if (current.left == null) return current.right;
+            if (current.right == null) return current.left;
+
+            // Case 3: Two children
+            // Replace with inorder successor (smallest in right subtree)
+            Node successor = findMinNode(current.right);
+            current.book = successor.book;
+
+            // Delete successor node from right subtree (but DO NOT decrement size again)
+            RemovedHolder dummy = new RemovedHolder();
+            current.right = delete(current.right, successor.book.getIsbn(), dummy);
+        }
+
+        return current;
+    }
+
+    private Node findMinNode(Node node) {
+        while (node.left != null) node = node.left;
+        return node;
+    }
+
+    /** Debug/Optional: Inorder traversal prints ISBNs in sorted order. */
+    public void printInOrder() {
+        System.out.println("Catalogue (Inorder by ISBN):");
+        printInOrder(root);
+        System.out.println();
+    }
+
+    private void printInOrder(Node current) {
+        if (current == null) return;
+        printInOrder(current.left);
+        System.out.println(current.book);
+        printInOrder(current.right);
+    }
+}
