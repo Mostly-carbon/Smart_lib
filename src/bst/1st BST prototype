@@ -1,132 +1,138 @@
-package com.mycompany.practicemain.DATA;
+package bst;
+
+import model.Book;
+
 public class BookBST {
 
-    // Node of BST
-    private static class Node {
-        Book book;
-        Node left;
-        Node right;
+    private BSTNode root;
 
-        Node(Book book) {
-            this.book = book;
-        }
+    public BookBST() {
+        root = null;
     }
 
-    private Node root;
-    private int size;
-
-    public int size() {
-        return size;
-    }
-
-    /** Insert or update a book in the BST. Average O(log n). */
+    // INSERT
     public void insert(Book book) {
-        root = insert(root, book);
+        root = insertRec(root, book);
     }
 
-    // Recursive insert is OK (Task 2 is BST implementation)
-    private Node insert(Node current, Book book) {
-        if (current == null) {
-            size++;
-            return new Node(book);
+    private BSTNode insertRec(BSTNode root, Book book) {
+
+        if (root == null) {
+            return new BSTNode(book);
         }
 
-        int cmp = book.getIsbn().compareTo(current.book.getIsbn());
-
-        if (cmp < 0) {
-            current.left = insert(current.left, book);
-        } else if (cmp > 0) {
-            current.right = insert(current.right, book);
-        } else {
-            // ISBN already exists -> update record
-            current.book = book;
+        if (book.getIsbn().compareTo(root.book.getIsbn()) < 0) {
+            root.left = insertRec(root.left, book);
         }
-        return current;
+
+        else if (book.getIsbn().compareTo(root.book.getIsbn()) > 0) {
+            root.right = insertRec(root.right, book);
+        }
+
+        return root;
     }
 
-    /**
-     * OPTIONAL helper (Iterative search)
-     * Task 3 is "recursive search", so you can replace/add that.
-     * This method is just to make BST usable for integration/testing.
-     */
-    public Book findIterative(String isbn) {
-        Node current = root;
-        while (current != null) {
-            int cmp = isbn.compareTo(current.book.getIsbn());
-            if (cmp == 0) return current.book;
-            if (cmp < 0) current = current.left;
-            else current = current.right;
-        }
-        return null;
+    // RECURSIVE SEARCH
+    public Book search(String isbn) {
+        return searchRec(root, isbn);
     }
 
-    /**
-     * Delete a book by ISBN and return the removed Book.
-     * This is helpful for Task 4 (borrow: remove from BST then push to stack).
-     */
+    private Book searchRec(BSTNode root, String isbn) {
+
+        if (root == null) {
+            return null;
+        }
+
+        if (isbn.equals(root.book.getIsbn())) {
+            return root.book;
+        }
+
+        if (isbn.compareTo(root.book.getIsbn()) < 0) {
+            return searchRec(root.left, isbn);
+        }
+
+        else {
+            return searchRec(root.right, isbn);
+        }
+    }
+
+    // DELETE
     public Book delete(String isbn) {
-        RemovedHolder holder = new RemovedHolder();
-        root = delete(root, isbn, holder);
-        if (holder.removed != null) size--;
-        return holder.removed;
+
+        Book deletedBook = search(isbn);
+
+        if (deletedBook != null) {
+            root = deleteRec(root, isbn);
+        }
+
+        return deletedBook;
     }
 
-    // Used to pass removed book out of recursion cleanly
-    private static class RemovedHolder {
-        Book removed;
-    }
+    private BSTNode deleteRec(BSTNode root, String isbn) {
 
-    private Node delete(Node current, String isbn, RemovedHolder holder) {
-        if (current == null) return null;
+        if (root == null) {
+            return null;
+        }
 
-        int cmp = isbn.compareTo(current.book.getIsbn());
+        if (isbn.compareTo(root.book.getIsbn()) < 0) {
+            root.left = deleteRec(root.left, isbn);
+        }
 
-        if (cmp < 0) {
-            current.left = delete(current.left, isbn, holder);
-        } else if (cmp > 0) {
-            current.right = delete(current.right, isbn, holder);
-        } else {
-            // Found node to delete
-            holder.removed = current.book;
+        else if (isbn.compareTo(root.book.getIsbn()) > 0) {
+            root.right = deleteRec(root.right, isbn);
+        }
 
-            // Case 1: No children
-            if (current.left == null && current.right == null) {
+        else {
+
+            // NO CHILD
+            if (root.left == null && root.right == null) {
                 return null;
             }
 
-            // Case 2: One child
-            if (current.left == null) return current.right;
-            if (current.right == null) return current.left;
+            // ONE CHILD
+            if (root.left == null) {
+                return root.right;
+            }
 
-            // Case 3: Two children
-            // Replace with inorder successor (smallest in right subtree)
-            Node successor = findMinNode(current.right);
-            current.book = successor.book;
+            if (root.right == null) {
+                return root.left;
+            }
 
-            // Delete successor node from right subtree (but DO NOT decrement size again)
-            RemovedHolder dummy = new RemovedHolder();
-            current.right = delete(current.right, successor.book.getIsbn(), dummy);
+            // TWO CHILDREN
+            BSTNode successor = findMin(root.right);
+
+            root.book = successor.book;
+
+            root.right = deleteRec(root.right,
+                                   successor.book.getIsbn());
         }
 
-        return current;
+        return root;
     }
 
-    private Node findMinNode(Node node) {
-        while (node.left != null) node = node.left;
-        return node;
+    private BSTNode findMin(BSTNode root) {
+
+        while (root.left != null) {
+            root = root.left;
+        }
+
+        return root;
     }
 
-    /** Debug/Optional: Inorder traversal prints ISBNs in sorted order. */
+    // DISPLAY SORTED BOOKS
     public void printInOrder() {
-        System.out.println("Catalogue (Inorder by ISBN):");
-        printInOrder(root);
-        System.out.println();
+        printInOrderRec(root);
     }
 
-    private void printInOrder(Node current) {
-        if (current == null) return;
-        printInOrder(current.left);
-        System.out.println(current.book);
-        printInOrder(current.right);
+    private void printInOrderRec(BSTNode root) {
+
+        if (root != null) {
+
+            printInOrderRec(root.left);
+
+            System.out.println(root.book);
+
+            printInOrderRec(root.right);
+        }
     }
 }

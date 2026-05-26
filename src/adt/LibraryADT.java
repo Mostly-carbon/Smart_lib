@@ -1,7 +1,10 @@
+package adt;
+
 import model.Book;
+
 public interface LibraryADT {
 
-    void addBook(String title, String author, String isbn);
+    void addBook(String isbn, String title, String author);
 
     Book searchBookByIsbn(String isbn);
 
