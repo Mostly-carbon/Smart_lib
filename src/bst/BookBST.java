@@ -103,8 +103,7 @@ public class BookBST {
 
             root.book = successor.book;
 
-            root.right = deleteRec(root.right,
-                                   successor.book.getIsbn());
+            root.right = deleteRec(root.right, successor.book.getIsbn());
         }
 
         return root;
