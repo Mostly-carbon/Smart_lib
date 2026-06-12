@@ -4,10 +4,10 @@ import model.Book;
 
 public class HistoryStack {
 
-    private StackNode top;
+    private StackNode top; // Points to the top of the stack
 
     public HistoryStack() {
-        top = null;
+        top = null; // Stack starts empty
     }
 
     // PUSH BOOK TO STACK
@@ -15,9 +15,9 @@ public class HistoryStack {
 
         StackNode newNode = new StackNode(book);
 
-        newNode.next = top;
+        newNode.next = top; // Link new node to current top
 
-        top = newNode;
+        top = newNode; // New node becomes the top
     }
 
     // DISPLAY HISTORY
@@ -32,9 +32,9 @@ public class HistoryStack {
 
         while (current != null) {
 
-            System.out.println(current.book);
+            System.out.println(current.book); // Print current book
 
-            current = current.next;
+            current = current.next; // Move to next node
         }
     }
 }

@@ -2,9 +2,9 @@ package model;
 
 public class Book {
 
-    private String isbn;
-    private String title;
-    private String author;
+    private String isbn;   // Unique identifier for the book
+    private String title;  // Book title
+    private String author; // Book author
 
     public Book(String isbn, String title, String author) {
         this.isbn = isbn;
@@ -13,15 +13,15 @@ public class Book {
     }
 
     public String getIsbn() {
-        return isbn;
+        return isbn; // Returns ISBN
     }
 
     public String getTitle() {
-        return title;
+        return title; // Returns title
     }
 
     public String getAuthor() {
-        return author;
+        return author; // Returns author
     }
 
     @Override
@@ -29,5 +29,6 @@ public class Book {
         return "ISBN: " + isbn +
                 ", Title: " + title +
                 ", Author: " + author;
+        // Formats book details for printing
     }
 }
