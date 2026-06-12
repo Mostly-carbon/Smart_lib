@@ -154,14 +154,14 @@ Display Stack Contents
 
 ---
 
-## Team Responsibilities
+## Team
 
-| Member | Responsibility |
-|--------|----------------|
-| Member 1 | ADT Design and Architecture |
-| Member 2 | BST and Stack Implementation |
-| Member 3 | Recursive Search |
-| Member 4 | Admin Logic and Console Interface |
+| Name |
+|--------|
+| Tawfique Hasan |
+| Mohab Ahmed Mohamed  Nabil Abdelraouf | 
+| Abdulrahman Abdullah  Abdulrahman Al-Gafri | 
+| Shuvo Estiak Johan | 
 
 ---
 
